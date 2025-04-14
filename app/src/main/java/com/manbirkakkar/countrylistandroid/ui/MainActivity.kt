@@ -39,7 +39,6 @@ class MainActivity : BaseActivity() {
         lifecycleScope.launch {
             repeatOnLifecycle(Lifecycle.State.STARTED) {
                 launch { viewModel.uiState.collect { handleUiState(it) } }
-                launch { viewModel.loading.collect { binding.progressBar.isVisible = it } }
             }
         }
     }
@@ -55,17 +54,20 @@ class MainActivity : BaseActivity() {
     private fun showLoading() = with(binding) {
         recyclerView.isVisible = false
         errorMessage.isVisible = false
+        binding.progressBar.isVisible = true
     }
 
     private fun showCountries(countries: List<Country>) = with(binding) {
         recyclerView.isVisible = true
         errorMessage.isVisible = false
+        binding.progressBar.isVisible = false
         adapter.submitList(countries)
     }
 
     private fun showError(message: String?) = with(binding) {
         recyclerView.isVisible = false
         errorMessage.isVisible = true
+        binding.progressBar.isVisible = false
         errorMessage.text = message ?: "Unknown error occurred"
     }
 }
