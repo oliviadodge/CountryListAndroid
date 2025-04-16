@@ -1,33 +1,34 @@
-package com.manbirkakkar.countrylistandroid.util
+package com.manbirkakkar.countrylistandroid
 
+import android.app.Application
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.ViewModelProvider
-import androidx.lifecycle.ViewModelStoreOwner
+import com.manbirkakkar.countrylistandroid.di.Injector
+import com.manbirkakkar.countrylistandroid.ui.MainActivity
 import com.manbirkakkar.countrylistandroid.ui.MainViewModel
-import com.manbirkakkar.network.RetrofitClient
 import com.manbirkakkar.network.repository.CountryRepository
 import com.manbirkakkar.network.repository.CountryRepositoryImpl
 import com.manbirkakkar.network.service.ApiService
 
-object ServiceLocator {
-    private val retrofitClient: RetrofitClient by lazy { RetrofitClient }
+class TestApp : Application(), Injector {
 
-    val apiService: ApiService by lazy {
-        retrofitClient.apiService
+    private val testApiService: ApiService by lazy {
+        TestApiService()
     }
 
     val countryRepository: CountryRepository by lazy {
-        CountryRepositoryImpl(apiService)
+        CountryRepositoryImpl(testApiService)
     }
 
-    fun createMainViewModel(owner: ViewModelStoreOwner): MainViewModel {
-        return ViewModelProvider(
-            owner,
+    override fun inject(mainActivity: MainActivity) {
+        mainActivity.viewModel = ViewModelProvider(
+            mainActivity,
             object : ViewModelProvider.Factory {
                 override fun <T : ViewModel> create(modelClass: Class<T>): T {
                     return MainViewModel(countryRepository) as T
                 }
             }
         )[MainViewModel::class.java]
+
     }
 }

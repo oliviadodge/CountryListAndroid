@@ -9,22 +9,23 @@ import androidx.recyclerview.widget.LinearLayoutManager
 import com.manbirkakkar.base.BaseActivity
 import com.manbirkakkar.countrylistandroid.adapter.CountriesAdapter
 import com.manbirkakkar.countrylistandroid.databinding.ActivityMainBinding
-import com.manbirkakkar.countrylistandroid.util.ServiceLocator
+import com.manbirkakkar.countrylistandroid.di.Injector
 import com.manbirkakkar.network.model.Country
 import kotlinx.coroutines.launch
 
 class MainActivity : BaseActivity() {
 
     private lateinit var binding: ActivityMainBinding
-    private lateinit var viewModel: MainViewModel
+    lateinit var viewModel: MainViewModel
     private val adapter by lazy { CountriesAdapter() }
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
+
+        (application as Injector).inject(this)
         binding = ActivityMainBinding.inflate(layoutInflater)
         setContentView(binding.root)
 
-        viewModel = ServiceLocator.createMainViewModel(this)
         setupRecyclerView()
         observeViewModel()
     }
